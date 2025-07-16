@@ -20,9 +20,7 @@ elif torch.cuda.is_available():
 else:
     device = "cpu"
 
-print(f"Loading model '{MODEL_NAME}' on {device}…")
 model = SentenceTransformer(MODEL_NAME, device=device)
-
 client = QdrantClient(":memory:")
 dim    = model.get_sentence_embedding_dimension()
 client.recreate_collection(
@@ -35,40 +33,45 @@ for fname in sorted(os.listdir(DATA_DIR)):
     if not fname.endswith(".json"):
         continue
     artist = fname.replace("Lyrics_", "").replace(".json", "")
-    with open(os.path.join(DATA_DIR, fname), encoding="utf-8") as f:
+    path   = os.path.join(DATA_DIR, fname)
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
-    if isinstance(data, list) and all(isinstance(x, str) for x in data):
-        lines = data
-    elif isinstance(data, dict) and isinstance(data.get("songs"), list):
-        lines = []
-        for song in data["songs"]:
-            txt = song.get("lyrics")
-            if isinstance(txt, str) and txt.strip():
-                lines.extend(txt.split("\n"))
-    else:
-        continue
-    for line in lines:
-        text = line.strip()
-        if text:
-            entries.append((artist, text))
 
-print(f"🚀 Collected {len(entries)} lines to index.")
+    if isinstance(data, list) and all(isinstance(x, str) for x in data):
+        for line in data:
+            text = line.strip()
+            if text:
+                entries.append((artist, "", "", text))
+    elif isinstance(data, dict) and isinstance(data.get("songs"), list):
+        for song in data["songs"]:
+            lyrics = song.get("lyrics")
+            title  = song.get("title", "")
+            img    = song.get("song_art_image_url") or song.get("header_image_url") or ""
+            if isinstance(lyrics, str) and lyrics.strip():
+                for line in lyrics.split("\n"):
+                    text = line.strip()
+                    if text:
+                        entries.append((artist, title, img, text))
 
 points = []
 pid = 0
 for batch_start in tqdm(range(0, len(entries), BATCH_SIZE), desc="Encoding batches"):
-    batch = entries[batch_start: batch_start + BATCH_SIZE]
-    texts = [text for (_, text) in batch]
+    batch  = entries[batch_start : batch_start + BATCH_SIZE]
+    texts  = [t for (_, _, _, t) in batch]
     vectors = model.encode(texts, batch_size=BATCH_SIZE, show_progress_bar=False)
-    for (artist, text), vec in zip(batch, vectors):
-        points.append(PointStruct(id=pid, vector=vec.tolist(), payload={"text": text, "artist": artist,  "title":  song.get("title", artist)}))
+    for (artist, title, img, text), vec in zip(batch, vectors):
+        points.append(PointStruct(
+            id=pid,
+            vector=vec.tolist(),
+            payload={
+                "text":   text,
+                "artist": artist,
+                "title":  title,
+                "image":  img
+            }
+        ))
         pid += 1
 
-print(f"⏫ Uploading {len(points)} vectors to Qdrant…")
 client.upsert(collection_name=COLLECTION, points=points)
-
-print(f"💾 Saving client + model to '{OUTPUT_PKL}'…")
 with open(OUTPUT_PKL, "wb") as f:
     pickle.dump((client, model), f)
-
-print("GPU‑accelerated ingestion complete!")
