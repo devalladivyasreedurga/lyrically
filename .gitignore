@@ -1,2 +1,7 @@
-/data/
-qdrant_data.pkl
+# backend
+/backend/data/
+/backend/qdrant_data.pkl
+
+# UI
+/ui/node_modules/
+/ui/dist/
