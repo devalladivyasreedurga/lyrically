@@ -73,7 +73,7 @@ export default function App() {
         </div>
 
         {/* Search */}
-        <div className="w-full max-w-2xl mb-6">
+        <div className="w-full max-w-3xl mb-6">
           <div className="relative">
             <div className="bg-white border-4 border-purple-300 shadow-lg">
               <div className="flex">
@@ -83,7 +83,7 @@ export default function App() {
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={onKeyDown}
                   placeholder="Say something... we'll find the song that says it too."
-                  className="flex-1 p-4 bg-white text-purple-500 font-mono text-lg focus:outline-none placeholder-purple-400"
+                  className="flex-1 p-4 bg-white text-purple-500 font-mono text-lg focus:outline-none placeholder-purple-300"
                 />
                 <button
                   onClick={handleSearch}
@@ -125,7 +125,7 @@ export default function App() {
                 <div
                   key={idx}
                   className="bg-white border-4 border-purple-300 hover:border-purple-400 transition-all duration-200 overflow-hidden group hover:-translate-y-1 hover:shadow-xl"
-                  style={{ boxShadow: '6px 6px 0px #c084fc' }}
+                  // style={{ boxShadow: '6px 6px 0px #c084fc' }}
                 >
                   {/* Image or Music Note */}
                   <div className="relative bg-purple-50 border-b-4 border-purple-300 h-56 flex items-center justify-center overflow-hidden">
@@ -141,7 +141,7 @@ export default function App() {
                           }}
                         />
                         {/* Purple tint overlay */}
-                        <div className="absolute inset-0 bg-purple-600 bg-opacity-30 mix-blend-multiply"></div>
+                        <div className="absolute inset-0 bg-purple-500 bg-opacity-30 mix-blend-multiply"></div>
                       </>
                     ) : null}
                     <div className="fallback-icon absolute inset-0 flex items-center justify-center bg-purple-100" style={{ display: r.image ? 'none' : 'flex' }}>
