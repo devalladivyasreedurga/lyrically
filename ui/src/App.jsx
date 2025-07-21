@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Music, Heart, Sparkles } from "lucide-react";
+import { Search, Music, Heart, Sparkles, Gauge, BarChart3, Activity } from "lucide-react";
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -125,7 +125,10 @@ export default function App() {
                 <div
                   key={idx}
                   className="bg-white border-4 border-purple-300 hover:border-purple-400 transition-all duration-200 overflow-hidden group hover:-translate-y-1 hover:shadow-xl"
-                  // style={{ boxShadow: '6px 6px 0px #c084fc' }}
+                  style={{ 
+                    zIndex: 1,
+                    // boxShadow: '6px 6px 0px #c084fc'
+                   }}
                 >
                   {/* Image or Music Note */}
                   <div className="relative bg-purple-50 border-b-4 border-purple-300 h-56 flex items-center justify-center overflow-hidden">
@@ -149,7 +152,7 @@ export default function App() {
                     </div>
                     <div className="absolute top-3 right-3 bg-white bg-opacity-90 border-2 border-purple-300 px-2 py-1 rounded-sm backdrop-blur-sm">
                       <div className="flex items-center gap-1">
-                        <Heart className="h-3 w-3 text-purple-500" />
+                        <Gauge className="h-3 w-3 text-purple-500" />
                         <span className="text-xs font-bold text-purple-800">
                           {r.score?.toFixed(1) || 'N/A'}
                         </span>
