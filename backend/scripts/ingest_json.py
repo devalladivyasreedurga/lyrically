@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import PointStruct, VectorParams, Distance
 
-DATA_DIR    = "data"
+DATA_DIR    = "data/json files"
 COLLECTION  = "lyrics"
 MODEL_NAME  = "multi-qa-mpnet-base-dot-v1"
 OUTPUT_PKL  = "qdrant_data.pkl"
